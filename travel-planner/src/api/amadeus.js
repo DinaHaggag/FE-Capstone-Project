@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_KEY = process.env.REACT_APP_AMADEUS_API_KEY;
+const API_KEY = import.meta.env.VITE_API_KEY;
+const apiSecret = import.meta.env.VITE_API_SECRET;
 const BASE_URL = 'https://test.api.amadeus.com/v1';
 
 const getAuthToken = async () => {
@@ -9,7 +10,7 @@ const getAuthToken = async () => {
       params: {
         grant_type: 'client_credentials',
         client_id: API_KEY,
-        client_secret: process.env.REACT_APP_AMADEUS_API_SECRET, // Add this to your .env
+        client_secret: apiSecret, 
       },
     });
     return response.data.access_token;

@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import SearchBar from './components/SearchBar.jsx';
+import DestinationCard from './components/DestinationCard.jsx';
+import ItineraryPlanner from './components/ItineraryPlanner.jsx';
+import { fetchDestinations } from './api/amadeus';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [destinations, setDestinations] = useState([]);
+  const [itinerary, setItinerary] = useState([]);
+
+  const handleSearch = async (query) => {
+    try {
+      const results = await fetchDestinations(query);
+      setDestinations(results);
+    } catch (error) {
+      console.error("Search error:", error);
+    }
+  };
+
+  const addToItinerary = (destination) => {
+    setItinerary([...itinerary, destination]);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container mx-auto">
+      <h1 className="text-3xl text-center my-4">Travel Planner</h1>
+      <SearchBar onSearch={handleSearch} />
+      <div className="flex flex-wrap justify-center">
+        {destinations.map((dest) => (
+          <DestinationCard key={dest.id} destination={dest} onSelect={addToItinerary} />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <ItineraryPlanner itinerary={itinerary} addToItinerary={addToItinerary} />
+    </div>
+  );
+};
 
-export default App
+export default App;
